@@ -58,7 +58,7 @@ public class UserController {
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        modifyUserAcoordingToDTO(user, userDto);
+        modifyUserAccordingToDTO(user, userDto);
         this.service.save(user);
         return new ResponseEntity<>(toDto(user), HttpStatus.OK);
     }
@@ -73,7 +73,7 @@ public class UserController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    private void modifyUserAcoordingToDTO(User user, CreatingUserDto userDto) {
+    private void modifyUserAccordingToDTO(User user, CreatingUserDto userDto) {
         if (userDto.firstName != null) {
             user.setFirstName(userDto.firstName);
         }

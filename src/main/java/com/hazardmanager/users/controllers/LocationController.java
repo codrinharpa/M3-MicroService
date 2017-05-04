@@ -28,8 +28,6 @@ public class LocationController {
 
     @RequestMapping(value = {"/{userId}/locations"}, method = RequestMethod.GET)
     public ResponseEntity<List<LocationDto>> getAllLocationsById(@PathVariable("userId") String userId) {
-//        List<Location> locations = this.service.getAll().stream().filter(userId)
-
         MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
         Query query = new Query();
         query.addCriteria(Criteria.where("userId").is(userId));
@@ -40,7 +38,6 @@ public class LocationController {
         }
 
         List<LocationDto> result = new ArrayList<>();
-        System.out.println(locations.get(0));
         for (Location location : locations) {
             LocationDto dto = toDto(location);
             result.add(dto);
@@ -55,8 +52,56 @@ public class LocationController {
         return new ResponseEntity<>(toDto(savedLocation), HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = {"/{userId}/locations/{alias}"}, method = RequestMethod.PUT)
+    public ResponseEntity<LocationDto> modifyLocation(@RequestBody CreatingLocationDto locationDto, @PathVariable("userId") String userId, @PathVariable("alias") String alias) {
+        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userId").is(userId));
+        query.addCriteria(Criteria.where("alias").is(alias));
+        List<Location> locations = mongoTemplate.find(query, Location.class);
+
+        Location location = locations.get(0);
+        if (location == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        modifyLocationAccordingToDTO(location, locationDto);
+        this.service.save(location);
+        return new ResponseEntity<>(toDto(location), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = {"/{userId}/locations/{alias}"}, method = RequestMethod.DELETE)
+    public ResponseEntity deleteLocation(@PathVariable("userId") String userId, @PathVariable("alias") String alias){
+        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userId").is(userId));
+        query.addCriteria(Criteria.where("alias").is(alias));
+        List<Location> locations = mongoTemplate.find(query, Location.class);
+
+        Location location = locations.get(0);
+        if (location == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        this.service.delete(location.getId());
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = {"/{userId}/locations"}, method = RequestMethod.DELETE)
+    public ResponseEntity deleteLocations(@PathVariable("userId") String userId){
+        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userId").is(userId));
+        List<Location> locations = mongoTemplate.find(query, Location.class);
+
+        for (Location location : locations)
+            this.service.delete(location.getId());
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+
+
     private LocationDto toDto(Location savedLocation) {
         LocationDto locationDto = new LocationDto();
+        locationDto.id = savedLocation.getId();
         locationDto.userId = savedLocation.getUserId();
         locationDto.alias = savedLocation.getAlias();
         locationDto.latitude = savedLocation.getLatitude();
@@ -71,6 +116,18 @@ public class LocationController {
         location.setLatitude(creatingLocationDto.latitude);
         location.setLongitude(creatingLocationDto.longitude);
         return location;
+    }
+
+    private void modifyLocationAccordingToDTO(Location location, CreatingLocationDto locationDto) {
+        if (locationDto.alias != null) {
+            location.setAlias(locationDto.alias);
+        }
+        if (locationDto.latitude >= -90 && locationDto.latitude <= 90) {
+            location.setLatitude(locationDto.latitude);
+        }
+        if (locationDto.longitude >= -180 && locationDto.longitude <= 180) {
+            location.setLongitude(locationDto.longitude);
+        }
     }
 
 

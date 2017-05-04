@@ -13,6 +13,9 @@ import javax.validation.constraints.Size;
 @Document(collection="Locations")
 public class Location {
 
+    @Id
+    private String id;
+
     @NotBlank
     @Size(max=50)
     private double latitude;
@@ -27,6 +30,15 @@ public class Location {
 
     @Size(max=50)
     private String userId;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 
     public double getLatitude() {
         return latitude;
