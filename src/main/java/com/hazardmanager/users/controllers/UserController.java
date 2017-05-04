@@ -54,10 +54,13 @@ public class UserController {
 
     private UserDto toDto(User user) {
         UserDto dto = new UserDto();
+        dto.id = user.getId();
         dto.firstName = user.getFirstName();
         dto.lastName = user.getLastName();
         dto.userName = user.getUserName();
-        dto.id = user.getId();
+        dto.password = user.getPassword();
+        dto.email = user.getEmail();
+        dto.phoneNumber= user.getPhoneNumber();
         return dto;
     }
 
@@ -66,6 +69,9 @@ public class UserController {
         user.setFirstName(dto.firstName);
         user.setLastName(dto.lastName);
         user.setUserName(dto.userName);
+        user.setPassword(dto.password);
+        user.setPhoneNumber(dto.phoneNumber);
+        user.setEmail(dto.email);
         return user;
     }
 }
