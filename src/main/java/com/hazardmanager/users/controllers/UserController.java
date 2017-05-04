@@ -52,6 +52,48 @@ public class UserController {
         return new ResponseEntity<>(toDto(user), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<UserDto> modifyUser(@RequestBody CreatingUserDto userDto, @PathVariable("id") String id) {
+        User user = this.service.getById(id);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        modifyUserAcoordingToDTO(user, userDto);
+        this.service.save(user);
+        return new ResponseEntity<>(toDto(user), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    public ResponseEntity deleteUser(@PathVariable("id") String id){
+        User user = this.service.getById(id);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        this.service.delete(user.getId());
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    private void modifyUserAcoordingToDTO(User user, CreatingUserDto userDto) {
+        if (userDto.firstName != null) {
+            user.setFirstName(userDto.firstName);
+        }
+        if (userDto.lastName != null) {
+            user.setLastName(userDto.lastName);
+        }
+        if (userDto.userName != null) {
+            user.setUserName(userDto.userName);
+        }
+        if (userDto.password != null) {
+            user.setPassword(userDto.password);
+        }
+        if (userDto.email != null) {
+            user.setEmail(userDto.email);
+        }
+        if (userDto.phoneNumber != null) {
+            user.setPhoneNumber(userDto.phoneNumber);
+        }
+    }
+
     private UserDto toDto(User user) {
         UserDto dto = new UserDto();
         dto.id = user.getId();
@@ -60,7 +102,7 @@ public class UserController {
         dto.userName = user.getUserName();
         dto.password = user.getPassword();
         dto.email = user.getEmail();
-        dto.phoneNumber= user.getPhoneNumber();
+        dto.phoneNumber = user.getPhoneNumber();
         return dto;
     }
 
