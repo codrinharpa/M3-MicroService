@@ -120,7 +120,13 @@ public class LocationController {
 
     private void modifyLocationAccordingToDTO(Location location, CreatingLocationDto locationDto) {
         if (locationDto.alias != null) {
-            location.setAlias(locationDto.alias);
+            MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userId").is(location.getUserId()));
+            query.addCriteria(Criteria.where("alias").is(locationDto.alias));
+            List<Location> locations = mongoTemplate.find(query, Location.class);
+            if (locations.isEmpty())
+                location.setAlias(locationDto.alias);
         }
         if (locationDto.latitude >= -90 && locationDto.latitude <= 90) {
             location.setLatitude(locationDto.latitude);
