@@ -1,5 +1,6 @@
 package com.hazardmanager.users.services;
 
+import com.hazardmanager.users.DTO.AreaDto;
 import com.hazardmanager.users.models.Location;
 import com.hazardmanager.users.repositories.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-
+import com.hazardmanager.users.utilis.DistanceCalculator;
+import java.awt.geom.Area;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LocationServiceImpl implements LocationService {
@@ -59,6 +62,17 @@ public class LocationServiceImpl implements LocationService {
         } else {
             return locations.get(0);
         }
+    }
+
+    @Override
+    public List<Location> getLocationsWithinEventArea(AreaDto area) {
+        List<Location> locations = this.repository.findAll();
+        return locations.stream().filter(location -> isInArea(location,area)).collect(Collectors.toList());
+    }
+
+    private boolean isInArea(Location location, AreaDto area){
+        double distance = DistanceCalculator.distance(location.getLatitude(),location.getLongitude(),area.latitude,area.longitude,"N");
+        return distance < area.radius;
     }
 
 }

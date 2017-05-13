@@ -1,7 +1,6 @@
 package com.hazardmanager.users.repositories;
 
-import com.hazardmanager.users.models.Location;
 import org.springframework.data.mongodb.repository.MongoRepository;
-
+import com.hazardmanager.users.models.Location;
 public interface LocationRepository extends MongoRepository<Location, String> {
 }
