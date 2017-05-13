@@ -29,6 +29,10 @@ public class User {
     private String password;
 
     @NotBlank
+    @Size(max=30)
+    private String role;
+
+    @NotBlank
     @Size(max = 50)
     private String email;
 
@@ -86,5 +90,17 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

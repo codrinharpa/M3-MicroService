@@ -112,6 +112,7 @@ public class UserController {
         dto.password = user.getPassword();
         dto.email = user.getEmail();
         dto.phoneNumber = user.getPhoneNumber();
+        dto.role = user.getRole();
         return dto;
     }
 
@@ -124,6 +125,7 @@ public class UserController {
         user.setPassword(passwordEncoder.encode(dto.password));
         user.setPhoneNumber(dto.phoneNumber);
         user.setEmail(dto.email);
+        user.setRole("ROLE_USER");
         return user;
     }
 }
