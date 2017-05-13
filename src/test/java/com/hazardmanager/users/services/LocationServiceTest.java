@@ -37,7 +37,7 @@ public class LocationServiceTest {
     @Test
      public void getLocationByUserIdAndAliasTest()
      {
-        Assert.assertEquals(location.getLocationByUserIdAndAlias("user","alias") , null);
+        Assert.assertEquals(location.getLocationByUserIdAndAlias("userid","alias") , null);
      }
      
 
