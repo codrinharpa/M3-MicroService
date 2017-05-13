@@ -44,6 +44,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<UserDto> addUser(@RequestBody CreatingUserDto userDto) {
         User user = toCreatingModel(userDto);
+        checkIfValidUser(user);
         User savedUser = this.service.save(user);
         return new ResponseEntity<>(toDto(savedUser), HttpStatus.CREATED);
     }
@@ -67,6 +68,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         modifyUserAccordingToDTO(user, userDto);
+        checkIfValidUser(user);
         this.service.save(user);
         return new ResponseEntity<>(toDto(user), HttpStatus.OK);
     }
@@ -127,5 +129,14 @@ public class UserController {
         user.setEmail(dto.email);
         user.setRole("ROLE_USER");
         return user;
+    }
+    private void checkIfValidUser(User user)
+    {
+        user.validateFirstName(user.getFirstName());
+        user.validateLastName(user.getLastName());
+        user.validateUserName(user.getUserName());
+        user.validatePassword(user.getPassword());
+        user.validateEmail(user.getEmail());
+        user.validatePhoneNumber(user.getPhoneNumber());
     }
 }

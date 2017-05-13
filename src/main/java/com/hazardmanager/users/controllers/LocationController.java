@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +40,13 @@ public class LocationController {
     @RequestMapping(value = {"/{userId}/locations"}, method = RequestMethod.POST)
     public ResponseEntity<LocationDto> addNewLocation(@RequestBody CreatingLocationDto creatinglocationDto, @PathVariable("userId") String userId) {
         Location location = this.service.getLocationByUserIdAndAlias(userId,creatinglocationDto.alias);
-        if (location != null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (location == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        checkIfLocationValid(location);
+
         location = toCreatingModel(creatinglocationDto, userId);
         Location savedLocation = this.service.save(location);
         return new ResponseEntity<>(toDto(savedLocation), HttpStatus.CREATED);
@@ -56,6 +60,8 @@ public class LocationController {
         if (location == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
+        checkIfLocationValid(location);
 
         if (alias != locationDto.alias && this.service.getLocationByUserIdAndAlias(userId,alias) != null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -117,5 +123,13 @@ public class LocationController {
         location.setAlias(locationDto.alias);
         location.setLatitude(locationDto.latitude);
         location.setLongitude(locationDto.longitude);
+    }
+
+    private void checkIfLocationValid(Location location)
+    {
+        location.validateLatitude(location.getLatitude());
+        location.validateLongitude(location.getLongitude());
+        location.validateAlias(location.getAlias());
+
     }
 }
