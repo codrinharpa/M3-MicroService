@@ -15,8 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/users")
 public class UserController {
+
     @Autowired
     private UserService service;
+
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<UserDto>> getAllUsers() {

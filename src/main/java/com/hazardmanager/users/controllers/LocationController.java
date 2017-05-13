@@ -23,25 +23,25 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/users")
 public class LocationController {
+
     @Autowired
     private LocationService service;
 
     @RequestMapping(value = {"/{userId}/locations"}, method = RequestMethod.GET)
     public ResponseEntity<List<LocationDto>> getAllLocationsById(@PathVariable("userId") String userId) {
-        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
-        Query query = new Query();
-        query.addCriteria(Criteria.where("userId").is(userId));
-        List<Location> locations = mongoTemplate.find(query, Location.class);
 
-        if (locations.isEmpty()) {
+        List<Location> locationModels = this.service.getAllUserLocations(userId);
+
+        if (locationModels.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         List<LocationDto> result = new ArrayList<>();
-        for (Location location : locations) {
+        for (Location location : locationModels) {
             LocationDto dto = toDto(location);
             result.add(dto);
         }
+
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -54,16 +54,13 @@ public class LocationController {
 
     @RequestMapping(value = {"/{userId}/locations/{alias}"}, method = RequestMethod.PUT)
     public ResponseEntity<LocationDto> modifyLocation(@RequestBody CreatingLocationDto locationDto, @PathVariable("userId") String userId, @PathVariable("alias") String alias) {
-        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
-        Query query = new Query();
-        query.addCriteria(Criteria.where("userId").is(userId));
-        query.addCriteria(Criteria.where("alias").is(alias));
-        List<Location> locations = mongoTemplate.find(query, Location.class);
 
-        Location location = locations.get(0);
+        Location location = this.service.getLocationByUserIdAndAlias(userId,alias);
+
         if (location == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
         modifyLocationAccordingToDTO(location, locationDto);
         this.service.save(location);
         return new ResponseEntity<>(toDto(location), HttpStatus.OK);
@@ -71,13 +68,7 @@ public class LocationController {
 
     @RequestMapping(value = {"/{userId}/locations/{alias}"}, method = RequestMethod.DELETE)
     public ResponseEntity deleteLocation(@PathVariable("userId") String userId, @PathVariable("alias") String alias){
-        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
-        Query query = new Query();
-        query.addCriteria(Criteria.where("userId").is(userId));
-        query.addCriteria(Criteria.where("alias").is(alias));
-        List<Location> locations = mongoTemplate.find(query, Location.class);
-
-        Location location = locations.get(0);
+        Location location = this.service.getLocationByUserIdAndAlias(userId,alias);
         if (location == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -87,13 +78,17 @@ public class LocationController {
 
     @RequestMapping(value = {"/{userId}/locations"}, method = RequestMethod.DELETE)
     public ResponseEntity deleteLocations(@PathVariable("userId") String userId){
-        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
-        Query query = new Query();
-        query.addCriteria(Criteria.where("userId").is(userId));
-        List<Location> locations = mongoTemplate.find(query, Location.class);
 
-        for (Location location : locations)
+        List<Location> locations = this.service.getAllUserLocations(userId);
+
+        if(locations.isEmpty()){
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        }
+
+        for (Location location : locations) {
             this.service.delete(location.getId());
+        }
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -119,14 +114,9 @@ public class LocationController {
     }
 
     private void modifyLocationAccordingToDTO(Location location, CreatingLocationDto locationDto) {
+
         if (locationDto.alias != null) {
-            MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"), "hazardmanager");
-            Query query = new Query();
-            query.addCriteria(Criteria.where("userId").is(location.getUserId()));
-            query.addCriteria(Criteria.where("alias").is(locationDto.alias));
-            List<Location> locations = mongoTemplate.find(query, Location.class);
-            if (locations.isEmpty())
-                location.setAlias(locationDto.alias);
+            location.setAlias(locationDto.alias);
         }
         if (locationDto.latitude >= -90 && locationDto.latitude <= 90) {
             location.setLatitude(locationDto.latitude);
