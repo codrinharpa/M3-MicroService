@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,10 @@ public class LocationController {
 
     @RequestMapping(value = {"/{userId}/locations"}, method = RequestMethod.POST)
     public ResponseEntity<LocationDto> addNewLocation(@RequestBody CreatingLocationDto creatinglocationDto, @PathVariable("userId") String userId) {
-        Location location = toCreatingModel(creatinglocationDto, userId);
+        Location location = this.service.getLocationByUserIdAndAlias(userId,creatinglocationDto.alias);
+        if (location != null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        location = toCreatingModel(creatinglocationDto, userId);
         Location savedLocation = this.service.save(location);
         return new ResponseEntity<>(toDto(savedLocation), HttpStatus.CREATED);
     }
@@ -53,9 +57,16 @@ public class LocationController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        modifyLocationAccordingToDTO(location, locationDto);
-        this.service.save(location);
-        return new ResponseEntity<>(toDto(location), HttpStatus.OK);
+        if (alias != locationDto.alias && this.service.getLocationByUserIdAndAlias(userId,alias) != null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        try {
+            modifyLocationAccordingToDTO(location, locationDto);
+            this.service.save(location);
+            return new ResponseEntity<>(toDto(location), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(value = {"/{userId}/locations/{alias}"}, method = RequestMethod.DELETE)
@@ -95,8 +106,7 @@ public class LocationController {
     }
 
     private Location toCreatingModel(CreatingLocationDto creatingLocationDto, String userId) {
-        Location location = new Location();
-        location.setUserId(userId);
+        Location location = new Location(userId);
         location.setAlias(creatingLocationDto.alias);
         location.setLatitude(creatingLocationDto.latitude);
         location.setLongitude(creatingLocationDto.longitude);
@@ -104,15 +114,8 @@ public class LocationController {
     }
 
     private void modifyLocationAccordingToDTO(Location location, CreatingLocationDto locationDto) {
-
-        if (locationDto.alias != null) {
-            location.setAlias(locationDto.alias);
-        }
-        if (locationDto.latitude >= -90 && locationDto.latitude <= 90) {
-            location.setLatitude(locationDto.latitude);
-        }
-        if (locationDto.longitude >= -180 && locationDto.longitude <= 180) {
-            location.setLongitude(locationDto.longitude);
-        }
+        location.setAlias(locationDto.alias);
+        location.setLatitude(locationDto.latitude);
+        location.setLongitude(locationDto.longitude);
     }
 }

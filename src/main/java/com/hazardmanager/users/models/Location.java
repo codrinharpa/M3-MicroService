@@ -27,6 +27,10 @@ public class Location {
     @Size(max=50)
     private String userId;
 
+    public Location(String userId) {
+        this.userId = userId;
+    }
+
     public String getId() {
         return id;
     }
@@ -36,6 +40,7 @@ public class Location {
     }
 
     public void setLatitude(double latitude) {
+        validateLatitude(latitude);
         this.latitude = latitude;
     }
 
@@ -44,6 +49,7 @@ public class Location {
     }
 
     public void setLongitude(double longitude) {
+        validateLongitude(longitude);
         this.longitude = longitude;
     }
 
@@ -52,6 +58,7 @@ public class Location {
     }
 
     public void setAlias(String alias) {
+        validateAlias(alias);
         this.alias = alias;
     }
 
@@ -59,7 +66,22 @@ public class Location {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+
+    private void validateLatitude(double latitude) {
+        if (latitude < -85 || latitude > 85) {
+            throw new IllegalArgumentException("Latitude value is invalid! Value has to be between -85 and 85. Passed value: " + latitude);
+        }
+    }
+
+    private void validateLongitude(double longitude) {
+        if (longitude < -180 || longitude > 180) {
+            throw new IllegalArgumentException("Longitude value is invalid! Value has to be between -180 and 180. Passed value: " + longitude);
+        }
+    }
+
+    private void validateAlias(String alias) {
+        if (alias.equals(null) || alias.equals("")) {
+            throw new IllegalArgumentException("Alias value is invalid! Value is null!");
+        }
     }
 }
