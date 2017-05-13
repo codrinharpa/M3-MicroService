@@ -1,15 +1,10 @@
 package com.hazardmanager.users.controllers;
 
 import com.hazardmanager.users.DTO.CreatingLocationDto;
-import com.hazardmanager.users.DTO.CreatingUserDto;
 import com.hazardmanager.users.DTO.LocationDto;
 import com.hazardmanager.users.models.Location;
 import com.hazardmanager.users.services.LocationService;
-import com.mongodb.MongoClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Bogdan on 04-May-17.
- */
 @RestController
 @RequestMapping("/v1/users")
 public class LocationController {
@@ -92,8 +84,6 @@ public class LocationController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-
-
     private LocationDto toDto(Location savedLocation) {
         LocationDto locationDto = new LocationDto();
         locationDto.id = savedLocation.getId();
@@ -125,6 +115,4 @@ public class LocationController {
             location.setLongitude(locationDto.longitude);
         }
     }
-
-
 }

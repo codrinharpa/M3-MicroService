@@ -2,7 +2,6 @@ package com.hazardmanager.users.services;
 
 import com.hazardmanager.users.models.Location;
 import com.hazardmanager.users.repositories.LocationRepository;
-import com.mongodb.MongoClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -55,12 +54,11 @@ public class LocationServiceImpl implements LocationService {
         query.addCriteria(Criteria.where("userId").is(userId));
         query.addCriteria(Criteria.where("alias").is(alias));
         List<Location> locations = mongoTemplate.find(query, Location.class);
-        if(locations.isEmpty()){
+        if (locations.isEmpty()) {
             return null;
-        }else{
+        } else {
             return locations.get(0);
         }
-
     }
 
 }

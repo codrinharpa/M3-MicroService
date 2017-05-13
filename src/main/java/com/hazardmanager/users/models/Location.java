@@ -2,14 +2,10 @@ package com.hazardmanager.users.models;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Size;
 
-/**
- * Created by Bogdan on 04-May-17.
- */
 @Document(collection="Locations")
 public class Location {
 
@@ -34,11 +30,6 @@ public class Location {
     public String getId() {
         return id;
     }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
 
     public double getLatitude() {
         return latitude;

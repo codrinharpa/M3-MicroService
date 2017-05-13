@@ -10,9 +10,6 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
-/**
- * Created by corne on 13-May-17.
- */
 @Configuration
 @ComponentScan(basePackages = "com.hazardmanager.users")
 public class MongoConfig {
