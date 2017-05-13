@@ -6,6 +6,7 @@ import com.hazardmanager.users.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.hazardmanager.users.services.UserService;
 
@@ -18,6 +19,9 @@ public class UserController {
 
     @Autowired
     private UserService service;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET)
@@ -116,7 +120,8 @@ public class UserController {
         user.setFirstName(dto.firstName);
         user.setLastName(dto.lastName);
         user.setUserName(dto.userName);
-        user.setPassword(dto.password);
+
+        user.setPassword(passwordEncoder.encode(dto.password));
         user.setPhoneNumber(dto.phoneNumber);
         user.setEmail(dto.email);
         return user;

@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
  */
 @Configuration
 @ComponentScan(basePackages = "com.hazardmanager.users")
-public class ApplicationConfig {
+public class MongoConfig {
 
     @Autowired
     private Environment environment;
