@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 import javax.validation.constraints.Size;
+import java.util.regex.Pattern;
 
 @Document(collection="Users")
 public class User {
@@ -102,5 +103,40 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public void validateFirstName(String text) {
+        if(text.length()>50)
+            throw new IllegalArgumentException("First Name must be under 50 characters long. Passed name has " + text.length()+ " characters");
+    }
+
+    public void validateLastName(String text) {
+        if(text.length()>50)
+            throw new IllegalArgumentException("Last Name must be under 50 characters long. Passed name has " + text.length()+ " characters");
+    }
+
+    public void validateUserName(String text) {
+        if(text.length()>50)
+            throw new IllegalArgumentException("Username must be under 50 characters long. Passed name has " + text.length()+ " characters");
+    }
+
+    public void validatePassword(String text) {
+        if(text.length()>50)
+            throw new IllegalArgumentException("Password must be under 50 characters long. Passed name has " + text.length()+ " characters");
+    }
+
+    public void validateEmail(String text) {
+        if(text.length()>50)
+            throw new IllegalArgumentException("Email must be under 50 characters long. Passed name has " + text.length()+ " characters");
+        if(!text.contains("@"))
+            throw new IllegalArgumentException("Email must be a valid email.");
+    }
+
+    public void validatePhoneNumber(String text) {
+        if(text.length()>50)
+            throw new IllegalArgumentException("Phone Number must be under 50 characters long. Passed name has " + text.length()+ " characters");
+        if (Pattern.matches("[a-zA-Z]+", text)) {
+            throw new IllegalArgumentException("Phone Number must be a valid phone number. It must contain only digits.");
+        }
     }
 }
