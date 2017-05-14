@@ -3,6 +3,7 @@ package com.hazardmanager.users.controllers;
 import com.hazardmanager.users.DTO.CreatingUserDto;
 import com.hazardmanager.users.DTO.UserDto;
 import com.hazardmanager.users.models.User;
+import com.hazardmanager.users.utilis.RandomImportsGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,15 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+//    @Autowired
+//    RandomImportsGenerator r;
+
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<UserDto>> getAllUsers() {
+
+//        r.generate();
+
         List<User> users = this.service.getAll();
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

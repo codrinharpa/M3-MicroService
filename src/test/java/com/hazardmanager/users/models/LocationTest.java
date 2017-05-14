@@ -11,7 +11,7 @@ public class LocationTest {
 
     @Before
     public void buildUp() {
-       // location = new Location();
+        location = new Location("591755495579aa2b44533c25");
     }
 
     @After

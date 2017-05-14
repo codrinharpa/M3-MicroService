@@ -1,9 +1,13 @@
 package com.hazardmanager.users.services;
 
+<<<<<<< HEAD
 import com.hazardmanager.users.DTO.AreaDto;
 import com.hazardmanager.users.DTO.LocationDto;
 import com.hazardmanager.users.models.Location;
 import com.hazardmanager.users.utilis.DistanceCalculator;
+=======
+import javax.tools.JavaFileManager.Location;
+>>>>>>> origin/master
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,3 +61,42 @@ public class LocationServiceTest {
 
 }
 
+<<<<<<< HEAD
+=======
+
+public class LocationServiceTest {
+
+//      private Location location;
+//
+//    @Before
+//    public void buildUp() {
+//        location = new Location("590b1c84ce65c6189c9ca4ff") {
+//            public String getName() {
+//                throw new UnsupportedOperationException("Not supported yet.");
+//            }
+//
+//            public boolean isOutputLocation() {
+//                throw new UnsupportedOperationException("Not supported yet.");
+//            }
+//        };
+//    }
+
+//    @After
+//    public void tearDown() {
+//        location = null;
+//    }
+//
+//    @Test
+//    public void getAllUserLocationsTest {
+//        location.setAlias(alias);
+//        Assert.assertEquals(location.getAllUserLocations("userid") , null);
+//   }
+//    @Test
+//     public void getLocationByUserIdAndAliasTest()
+//     {
+//        Assert.assertEquals(location.getLocationByUserIdAndAlias("userid","alias") , null);
+//     }
+//
+
+}
+>>>>>>> origin/master

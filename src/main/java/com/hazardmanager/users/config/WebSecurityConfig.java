@@ -42,6 +42,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         auth.userDetailsService(mongoSecurityService).passwordEncoder(passwordEncoder)
                 .and()
-        .inMemoryAuthentication().withUser("user").password("password").roles("USER");
+        .inMemoryAuthentication().withUser("user").password("password").roles("ADMIN");
     }
 }

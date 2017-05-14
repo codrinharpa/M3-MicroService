@@ -6,6 +6,8 @@ import com.hazardmanager.users.services.LocationService;
 import com.hazardmanager.users.services.LocationServiceImpl;
 import com.hazardmanager.users.services.UserService;
 import com.hazardmanager.users.services.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.Random;
@@ -13,9 +15,15 @@ import java.util.Random;
 /**
  * Created by Andrei on 5/13/2017.
  */
+@Service
 public class RandomImportsGenerator {
-    UserService userService = new UserServiceImpl();
-    LocationService locationService = new LocationServiceImpl();
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    LocationService locationService;
+
     User user;
     Location location;
     Random random = new Random();
