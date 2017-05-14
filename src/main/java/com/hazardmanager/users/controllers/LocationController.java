@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +38,8 @@ public class LocationController {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-    @RequestMapping(value = {"/locations?lat={lat}&long={long}&radius={radius}"}, method = RequestMethod.GET)
-    public ResponseEntity<List<LocationDto>> getAllLocationsInArea(@PathVariable("lat") double latitude,@PathVariable double longitude,@PathVariable double radius) {
+    @RequestMapping(value = {"/locations"}, method = RequestMethod.GET)
+    public ResponseEntity<List<LocationDto>> getAllLocationsInArea(@RequestParam("latitude") double latitude,@RequestParam double longitude,@RequestParam double radius) {
         AreaDto area = new AreaDto();
         area.longitude = longitude;
         area.latitude = latitude;
@@ -59,13 +60,8 @@ public class LocationController {
     @RequestMapping(value = {"/{userId}/locations"}, method = RequestMethod.POST)
     public ResponseEntity<LocationDto> addNewLocation(@RequestBody CreatingLocationDto creatinglocationDto, @PathVariable("userId") String userId) {
         Location location = this.service.getLocationByUserIdAndAlias(userId,creatinglocationDto.alias);
-
-        if (location == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        checkIfLocationValid(location);
-
+        if (location != null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         location = toCreatingModel(creatinglocationDto, userId);
         Location savedLocation = this.service.save(location);
         return new ResponseEntity<>(toDto(savedLocation), HttpStatus.CREATED);
@@ -79,8 +75,6 @@ public class LocationController {
         if (location == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
-        checkIfLocationValid(location);
 
         if (alias != locationDto.alias && this.service.getLocationByUserIdAndAlias(userId,alias) != null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -142,13 +136,5 @@ public class LocationController {
         location.setAlias(locationDto.alias);
         location.setLatitude(locationDto.latitude);
         location.setLongitude(locationDto.longitude);
-    }
-
-    private void checkIfLocationValid(Location location)
-    {
-        location.validateLatitude(location.getLatitude());
-        location.validateLongitude(location.getLongitude());
-        location.validateAlias(location.getAlias());
-
     }
 }
