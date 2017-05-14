@@ -3,13 +3,13 @@ package com.hazardmanager.users.services;
 import com.hazardmanager.users.DTO.AreaDto;
 import com.hazardmanager.users.models.Location;
 import com.hazardmanager.users.repositories.LocationRepository;
+import com.hazardmanager.users.utilis.DistanceCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import com.hazardmanager.users.utilis.DistanceCalculator;
-import java.awt.geom.Area;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,7 +71,9 @@ public class LocationServiceImpl implements LocationService {
     }
 
     private boolean isInArea(Location location, AreaDto area){
-        double distance = DistanceCalculator.distance(location.getLatitude(),location.getLongitude(),area.latitude,area.longitude,"N");
+        double distance = DistanceCalculator.distance(location.getLatitude(),location.getLongitude(),area.latitude,area.longitude);
+        System.out.println(location.getLatitude()+","+location.getLongitude());
+        System.out.println(area.latitude+","+area.longitude);
         System.out.println(distance);
         return distance < area.radius;
     }
