@@ -1,6 +1,8 @@
 package com.hazardmanager.users.services;
 
 import com.hazardmanager.users.DTO.AreaDto;
+import com.hazardmanager.users.DTO.LocationDto;
+import com.hazardmanager.users.DTO.UserDto;
 import com.hazardmanager.users.models.Location;
 import com.hazardmanager.users.repositories.LocationRepository;
 import com.hazardmanager.users.utilis.DistanceCalculator;
@@ -10,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,17 +68,26 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public List<Location> getLocationsWithinEventArea(AreaDto area) {
+    public List<Location> getLocationsWithinEventArea (AreaDto area) throws NullPointerException{
+        if(area == null)
+            throw new NullPointerException();
         List<Location> locations = this.repository.findAll();
-        return locations.stream().filter(location -> isInArea(location,area)).collect(Collectors.toList());
+        return locations.stream().filter(location -> isInArea(toDto(location),area)).collect(Collectors.toList());
     }
-
-    private boolean isInArea(Location location, AreaDto area){
-        double distance = DistanceCalculator.distance(location.getLatitude(),location.getLongitude(),area.latitude,area.longitude);
-        System.out.println(location.getLatitude()+","+location.getLongitude());
+    public static boolean isInArea(LocationDto location, AreaDto area){
+        double distance = DistanceCalculator.distance(location.latitude,location.longitude,area.latitude,area.longitude);
+        System.out.println(location.latitude+","+location.longitude);
         System.out.println(area.latitude+","+area.longitude);
         System.out.println(distance);
         return distance < area.radius;
     }
-
+    private LocationDto toDto(Location savedLocation) {
+        LocationDto locationDto = new LocationDto();
+        locationDto.id = savedLocation.getId();
+        locationDto.userId = savedLocation.getUserId();
+        locationDto.alias = savedLocation.getAlias();
+        locationDto.latitude = savedLocation.getLatitude();
+        locationDto.longitude = savedLocation.getLongitude();
+        return locationDto;
+    }
 }
