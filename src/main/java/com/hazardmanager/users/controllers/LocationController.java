@@ -5,6 +5,7 @@ import com.hazardmanager.users.DTO.CreatingLocationDto;
 import com.hazardmanager.users.DTO.LocationDto;
 import com.hazardmanager.users.models.Location;
 import com.hazardmanager.users.services.LocationService;
+import com.hazardmanager.users.utilis.RandomImportsGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ public class LocationController {
     @RequestMapping(value = {"/{userId}/locations"}, method = RequestMethod.GET)
     public ResponseEntity<List<LocationDto>> getAllLocationsById(@PathVariable("userId") String userId) {
 
+
+
         List<Location> locationModels = this.service.getAllUserLocations(userId);
 
         if (locationModels.isEmpty()) {
@@ -38,7 +41,7 @@ public class LocationController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @RequestMapping(value = {"/locations?lat={lat}&long={long}&radius={radius}"}, method = RequestMethod.GET)
-    public ResponseEntity<List<LocationDto>> getAllLocationsInArea(@PathVariable("lat") double latitude,@PathVariable double longitude,@PathVariable double radius) {
+    public ResponseEntity<List<LocationDto>> getAllLocationsInArea(@PathVariable("lat") double latitude,@PathVariable("long") double longitude,@PathVariable("radius") double radius) {
         AreaDto area = new AreaDto();
         area.longitude = longitude;
         area.latitude = latitude;
@@ -119,6 +122,8 @@ public class LocationController {
 
         return new ResponseEntity(HttpStatus.OK);
     }
+
+
 
     private LocationDto toDto(Location savedLocation) {
         LocationDto locationDto = new LocationDto();
